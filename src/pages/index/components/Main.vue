@@ -112,9 +112,9 @@
         </p>
       </div>
     </div>
-    <!-- <div class="btns">
+    <div class="btns">
       <a href="/c101010100/" class="btn btn-all">查看全部职位</a>
-    </div> -->
+    </div>
   </div>
 </template>
 
