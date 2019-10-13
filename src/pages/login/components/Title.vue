@@ -1,12 +1,12 @@
 <template>
     <div class="title">
-        <h1>注册BOSS直聘</h1>
+        <h1>登录BOSS直聘</h1>
     </div>
 </template>
 
 <script>
 export default {
-  name: "RegisterTitle"
+  name: "LoginTitle"
 };
 </script>
 
