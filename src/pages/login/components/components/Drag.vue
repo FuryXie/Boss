@@ -1,131 +1,97 @@
 <template>
-  <div class="main">
-    <div class="sign-tab">
-      <span class="link-signin" @click="addClassFun(0)" v-bind:class="{cur:0==showcur}">密码登录</span>
-      <span class="link-sms" @click="addClassFun(1)" v-bind:class="{cur:1==showcur}">短信登录</span>
-      <!-- <span class="link-scan">扫码登录</span> -->
-    </div>
-
-    <!-- 密码登录 -->
-    <div class="login-pwd" v-show="show">
-      <!-- 输入电话 -->
-      <span class="ipt-wrap">
-        <i class="icon-sign-phone"></i>
-        <input type="tel" class="ipt-tel" placeholder="手机号" name="phone" autocomplete="off" />
-      </span>
-
-      <!-- 密码 -->
+    <!-- 滑动验证 -->
       <div class="form-row">
-        <span class="ipt-wrap">
-          <i class="icon-sign-pwd"></i>
-          <input
-            type="password"
-            class="ipt ipt-sms required"
-            placeholder="短信验证码"
-            name="phoneCode"
-            maxlength="20"
-          />
-        </span>
-        <!-- 错误图标 -->
-        <div class="tip-error"></div>
+        <div class="row-code nc-container" id="row-code" style="display: block;">
+          <div class="_nc">
+            <div id="nc_1-stage-1" class="stage stage1" style="display: block;">
+              <div class="slider">
+                <div class="label">请向右滑动验证</div>
+                <div class="track" v-bind:class="{'back': isGo}" ref="xtrack" style="width: 24px;">
+                  <div class="bg-green" style="width: 345px;">
+                    <div v-show="!isActive">验证通过</div>
+                  </div>
+                </div>
+                <div class="button" style="left: 0px;background: transparent;" @touchstart="move">
+                  <div
+                    class="icon nc-iconfont"
+                    v-bind:class="{'icon-slide-arrow': isActive, 'icon-ok': !isActive, 'yes': !isActive,'back2': isGo }"
+                    id="nc_1_n1t"
+                    style="background: rgb(255, 255, 255);"
+                  ></div>
+                  <!-- icon nc-iconfont icon-slide-arrow -->
+                  <!-- icon nc-iconfont icon-ok yes -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-
-      <!-- 滑动验证 -->
-      <drag></drag>
-
-      <!-- 登录按钮 -->
-      <button type="submit" class="login">登录</button>
-
-      <!-- 提示信息 -->
-      <div class="text-tip">
-        <div class="tip-error"></div>没有账号
-        <router-link to="/register" class="link-register">立即注册</router-link>
-      </div>
-    </div>
-    <!-- 短信登录 -->
-    <div class="login-message" v-show="!show">
-      <!-- 输入电话 -->
-      <span class="ipt-wrap">
-        <i class="icon-sign-phone"></i>
-        <input type="tel" class="ipt-tel" placeholder="手机号" name="phone" autocomplete="off" />
-      </span>
-
-      <!-- 滑动验证 -->
-      <drag></drag>
-
-      <!-- 验证码 -->
-      <div class="form-row">
-        <span class="ipt-wrap">
-          <i class="icon-sign-sms"></i>
-          <input
-            type="text"
-            class="ipt ipt-sms required"
-            placeholder="短信验证码"
-            name="phoneCode"
-            maxlength="6"
-          />
-          <input type="hidden" name="smsType" value="2" />
-          <button type="button" class="btn btn-sms" data-url="/wapi/zppassport/send/smsCode">发送验证码</button>
-        </span>
-        <!-- 错误图标 -->
-        <div class="tip-error"></div>
-      </div>
-
-      <!-- 登录按钮 -->
-      <button type="submit" class="login">登录</button>
-
-      <!-- 提示信息 -->
-      <div class="text-tip">
-        <div class="tip-error"></div>没有账号
-        <router-link to="/register" class="link-register">立即注册</router-link>
-      </div>
-    </div>
-  </div>
 </template>
 
 <script>
-import Drag from './components/Drag'
 export default {
-  name: "LoginMain",
-  components:{
-        Drag,
-  },
+  name: "Drag",
   data: function() {
     return {
-      showcur: "0",
-      show: "true",
       positionY: 0,
       isActive: true,
       isGo: false
     };
   },
   methods: {
-    addClassFun: function(index) {
-      this.showcur = index;
-      if (index == 0) {
-        this.show = true;
-        // 初始化滑块
-        this.isGo = false;
-        this.isActive=true;
-      } else {
-        this.show = false;
-        // 初始化滑块
-        this.isGo = false;
-        this.isActive=true;
-      }
+    move(e) {
+      this.isGo = false;
+      let odiv = e.target; //获取目标元素
+
+      //算出鼠标相对元素的位置
+      let disX = e.changedTouches[0].clientX - odiv.offsetLeft;
+      // let disY = e.clientY - odiv.offsetTop;
+      document.ontouchmove = e => {
+        //鼠标按下并移动的事件
+        //用鼠标的位置减去鼠标相对元素的位置，得到元素的位置
+        let left = e.changedTouches[0].clientX - disX;
+
+        //绑定元素位置到positionX和positionY上面
+        this.positionY = left;
+
+        //移动当前元素
+        if (left > 0) {
+          if (left < 297) {
+            odiv.style.left = left + "px";
+            this.$refs.xtrack.style.width = left + "px";
+          } else {
+            odiv.style.left = 297 + "px";
+            this.$refs.xtrack.style.width = 297 + "px";
+            this.isActive = false;
+            document.ontouchmove = null;
+            document.ontouchend = null;
+          }
+        }
+        // odiv.style.top = top + 'px';
+      };
+      document.ontouchend = e => {
+        document.ontouchmove = null;
+        document.ontouchend = null;
+
+        this.positionY = 0;
+        //移动当前元素(归零)
+        odiv.style.left = 0 + "px";
+        this.$refs.xtrack.style.width = 0 + "px";
+        this.isGo = true;
+      };
     }
-    
   }
+
 };
 </script>
 
 <style scoped>
 /* 以下为用于滑动验证的css */
-.back {
-  transition: width 0.5s;
+.back{
+  transition: width .5s;
 }
-.back2 {
-  transition: left 0.5s;
+.back2{
+  transition: left .5s;
 }
 .button {
   position: relative;
@@ -153,111 +119,6 @@ export default {
   margin: auto;
 }
 
-/*! 切换按钮 */
-div,
-span {
-  padding: 0;
-  margin: 0;
-  -webkit-tap-highlight-color: transparent;
-  -webkit-text-size-adjust: none;
-}
-::selection {
-  color: #fff;
-  background: #00d7c6;
-}
-::-moz-selection {
-  color: #fff;
-  background: #00d7c6;
-}
-.sign-tab {
-  font-size: 0;
-  white-space: nowrap;
-  padding-top: 4px;
-  text-align: center;
-  margin-bottom: 44px;
-}
-.sign-tab span {
-  display: inline-block;
-  width: 70px;
-  font-size: 14px;
-  color: #9fa3b0;
-  margin: 0 28px -2px;
-  height: 36px;
-  border-bottom: 2px #f2f5f9 solid;
-  cursor: pointer;
-}
-.sign-tab span:hover {
-  color: #414a60;
-}
-.sign-tab span.cur {
-  border-bottom-color: #62d5c8;
-  font-size: 16px;
-  color: #414a60;
-  padding: 0 0 2px 0;
-}
-.sign-tab span.link-signin {
-  margin-left: 0;
-}
-.sign-tab span.link-sms {
-  text-align: center;
-}
-.sign-tab span.link-scan {
-  margin-right: 0;
-  text-align: right;
-}
-.sign-wrap-v2 .sign-tab {
-  display: flex;
-  justify-content: space-between;
-  height: 22px;
-  margin-bottom: 44px;
-  padding: 0 0 15px;
-  border-bottom: 2px solid #f2f5f9;
-  line-height: 22px;
-}
-.sign-wrap-v2 .sign-tab span {
-  width: 70px;
-  height: 22px;
-  line-height: 22px;
-  padding-bottom: 15px;
-  border-bottom: 2px solid #f2f5f9;
-  color: #9fa3b0;
-  font-size: 14px;
-  cursor: pointer;
-  text-align: center;
-}
-.sign-wrap-v2 .sign-tab span.cur {
-  border-bottom-color: #53cac3;
-  color: #414a60;
-  font-size: 16px;
-}
-@media (max-width: 800px) {
-  .page-sign .sign-tab {
-    display: table;
-    width: 100%;
-    border-bottom-width: 0;
-  }
-  .page-sign .sign-tab span {
-    display: table-cell;
-    width: 50%;
-    text-align: center;
-    padding-top: 8px;
-  }
-  .page-sign .sign-tab .link-scan {
-    display: none;
-  }
-  .sign-tab span {
-    border-bottom: 2px #f2f5f9 solid;
-  }
-}
-.link-signin {
-  width: 50% !important;
-  margin: 0 0 -4px 0 !important;
-}
-.link-sms {
-  width: 50% !important;
-  margin: 0 0 -4px 0 !important;
-}
-
 .main {
   box-shadow: none;
   width: auto;
@@ -277,27 +138,12 @@ span {
   left: 9px;
   top: 11px;
   /* background-image: url(../images/icons-sign.png); */
-  background-image: url("../../../assets/images/icons-sign.png");
+  background-image: url("../../../../assets/images/icons-sign.png");
   background-repeat: no-repeat;
   -webkit-transition: box-shadow linear 0.2s;
   transition: box-shadow linear 0.2s;
 }
-.icon-sign-pwd {
-  background-position: 2px -91px;
-}
-.icon-sign-pwd {
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  left: 9px;
-  top: 11px;
-}
-.icon-sign-pwd {
-  background-image: url(../../../assets/images/icons-sign.png);
-  background-repeat: no-repeat;
-  -webkit-transition: box-shadow linear 0.2s;
-  transition: box-shadow linear 0.2s;
-}
+
 .ipt-tel {
   min-height: 22px;
   line-height: 22px;
@@ -654,7 +500,7 @@ input::-ms-reveal {
   border: 0;
 }
 .form-row .btn-sms {
-  background-image: url(../../../assets/images/icons-sign.png);
+  background-image: url(../../../../assets/images/icons-sign.png);
   background-repeat: no-repeat;
   -webkit-transition: box-shadow linear 0.2s;
   transition: box-shadow linear 0.2s;
@@ -864,7 +710,7 @@ input::-ms-reveal {
   }
 }
 /* 注册按钮 */
-.login {
+.register {
   width: 100%;
   font-size: 16px;
   height: 42px;
@@ -900,8 +746,5 @@ input::-ms-reveal {
 }
 .text-tip .link-signin {
   color: #18c3b1;
-}
-.link-register {
-  padding: 0 0 0 6px !important;
 }
 </style>
