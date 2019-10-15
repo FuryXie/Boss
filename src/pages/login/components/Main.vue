@@ -18,7 +18,13 @@
       <div class="form-row">
         <span class="ipt-wrap">
           <i class="icon-sign-pwd"></i>
-          <input type="password" class="ipt ipt-sms required" placeholder="短信验证码" name="phoneCode" maxlength="20"/>
+          <input
+            type="password"
+            class="ipt ipt-sms required"
+            placeholder="短信验证码"
+            name="phoneCode"
+            maxlength="20"
+          />
         </span>
         <!-- 错误图标 -->
         <div class="tip-error"></div>
@@ -26,16 +32,24 @@
 
       <!-- 滑动验证 -->
       <div class="form-row">
-        <div class="row-code nc-container" id="row-code" style="display: block;">
+        <div class="row-code nc-container" style="display: block;">
           <div class="_nc">
-            <div id="nc_1-stage-1" class="stage stage1" style="display: block;">
+            <div class="stage stage1" style="display: block;">
               <div class="slider">
                 <div class="label">请向右滑动验证</div>
-                <div class="track" style="width: 24px;">
-                  <div class="bg-green" style="width: 345px;"></div>
+                <div class="track" v-bind:class="{'back': isGo}" ref="xtrack" style="width: 24px;">
+                  <div class="bg-green" style="width: 345px;">
+                    <div v-show="!isActive">验证通过</div>
+                  </div>
                 </div>
-                <div class="button" style="left: 0px;">
-                  <div class="icon nc-iconfont icon-slide-arrow" id="nc_1_n1t"></div>
+                <div class="button" style="left: 0px;background: transparent;" @touchstart="move">
+                  <div
+                    class="icon nc-iconfont"
+                    v-bind:class="{'icon-slide-arrow': isActive, 'icon-ok': !isActive, 'yes': !isActive,'back2': isGo }"
+                    style="background: rgb(255, 255, 255);"
+                  ></div>
+                  <!-- icon nc-iconfont icon-slide-arrow -->
+                  <!-- icon nc-iconfont icon-ok yes -->
                 </div>
               </div>
             </div>
@@ -67,11 +81,20 @@
             <div id="nc_1-stage-1" class="stage stage1" style="display: block;">
               <div class="slider">
                 <div class="label">请向右滑动验证</div>
-                <div class="track" style="width: 24px;">
-                  <div class="bg-green" style="width: 345px;"></div>
+                <div class="track" v-bind:class="{'back': isGo}" ref="xtrack" style="width: 24px;">
+                  <div class="bg-green" style="width: 345px;">
+                    <div v-show="!isActive">验证通过</div>
+                  </div>
                 </div>
-                <div class="button" style="left: 0px;">
-                  <div class="icon nc-iconfont icon-slide-arrow" id="nc_1_n1t"></div>
+                <div class="button" style="left: 0px;background: transparent;" @touchstart="move">
+                  <div
+                    class="icon nc-iconfont"
+                    v-bind:class="{'icon-slide-arrow': isActive, 'icon-ok': !isActive, 'yes': !isActive,'back2': isGo }"
+                    id="nc_1_n1t"
+                    style="background: rgb(255, 255, 255);"
+                  ></div>
+                  <!-- icon nc-iconfont icon-slide-arrow -->
+                  <!-- icon nc-iconfont icon-ok yes -->
                 </div>
               </div>
             </div>
@@ -115,7 +138,10 @@ export default {
   data: function() {
     return {
       showcur: "0",
-      show: "true"
+      show: "true",
+      positionY: 0,
+      isActive: true,
+      isGo: false
     };
   },
   methods: {
@@ -123,15 +149,95 @@ export default {
       this.showcur = index;
       if (index == 0) {
         this.show = true;
+        // 初始化滑块
+        this.isGo = false;
+        this.isActive=true;
       } else {
         this.show = false;
+        // 初始化滑块
+        this.isGo = false;
+        this.isActive=true;
       }
+    },
+    move(e) {
+      this.isGo = false;
+      let odiv = e.target; //获取目标元素
+
+      //算出鼠标相对元素的位置
+      let disX = e.changedTouches[0].clientX - odiv.offsetLeft;
+      // let disY = e.clientY - odiv.offsetTop;
+      document.ontouchmove = e => {
+        //鼠标按下并移动的事件
+        //用鼠标的位置减去鼠标相对元素的位置，得到元素的位置
+        let left = e.changedTouches[0].clientX - disX;
+
+        //绑定元素位置到positionX和positionY上面
+        this.positionY = left;
+
+        //移动当前元素
+        if (left > 0) {
+          if (left < 297) {
+            odiv.style.left = left + "px";
+            this.$refs.xtrack.style.width = left + "px";
+          } else {
+            odiv.style.left = 297 + "px";
+            this.$refs.xtrack.style.width = 297 + "px";
+            this.isActive = false;
+            document.ontouchmove = null;
+            document.ontouchend = null;
+          }
+        }
+        // odiv.style.top = top + 'px';
+      };
+      document.ontouchend = e => {
+        document.ontouchmove = null;
+        document.ontouchend = null;
+
+        this.positionY = 0;
+        //移动当前元素(归零)
+        odiv.style.left = 0 + "px";
+        this.$refs.xtrack.style.width = 0 + "px";
+        this.isGo = true;
+      };
     }
   }
 };
 </script>
 
 <style scoped>
+/* 以下为用于滑动验证的css */
+.back {
+  transition: width 0.5s;
+}
+.back2 {
+  transition: left 0.5s;
+}
+.button {
+  position: relative;
+}
+._nc .icon-ok:before {
+  content: "\e606";
+}
+._nc .stage1 .icon.yes {
+  background-position: -60px 0;
+}
+.row-code ._nc .stage1 .icon-ok {
+  color: #8d92a1;
+  font-size: 22px;
+  border: 1px solid #8d92a1;
+  width: 46px;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  left: 0;
+}
+._nc .stage1 .icon {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+}
+
 /*! 切换按钮 */
 div,
 span {
@@ -262,20 +368,20 @@ span {
   transition: box-shadow linear 0.2s;
 }
 .icon-sign-pwd {
-    background-position: 2px -91px;
+  background-position: 2px -91px;
 }
 .icon-sign-pwd {
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    left: 9px;
-    top: 11px;
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  left: 9px;
+  top: 11px;
 }
-.icon-sign-pwd{
-    background-image: url(../../../assets/images/icons-sign.png);
-    background-repeat: no-repeat;
-    -webkit-transition: box-shadow linear .2s;
-    transition: box-shadow linear .2s;
+.icon-sign-pwd {
+  background-image: url(../../../assets/images/icons-sign.png);
+  background-repeat: no-repeat;
+  -webkit-transition: box-shadow linear 0.2s;
+  transition: box-shadow linear 0.2s;
 }
 .ipt-tel {
   min-height: 22px;

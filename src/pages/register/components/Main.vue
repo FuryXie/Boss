@@ -13,18 +13,23 @@
           <div id="nc_1-stage-1" class="stage stage1" style="display: block;">
             <div class="slider">
               <div class="label">请向右滑动验证</div>
-              <div class="track" style="width: 24px;">
-                <div class="bg-green" style="width: 345px;"></div>
+              <div class="track" v-bind:class="{'back': isGo}" ref="xtrack" style="width: 24px;">
+                <div class="bg-green"  style="width: 345px;" >
+                  <div v-show="!isActive">验证通过</div>
+                </div>
               </div>
-              <div class="button" style="left: 0px;">
-                <div class="icon nc-iconfont icon-slide-arrow" id="nc_1_n1t"></div>
+              <div class="button" style="left: 0px;background: transparent;" @touchstart="move">
+                <div class="icon nc-iconfont" 
+                  v-bind:class="{'icon-slide-arrow': isActive, 'icon-ok': !isActive, 'yes': !isActive,'back2': isGo }" id="nc_1_n1t" style="background: rgb(255, 255, 255);"></div>
+                <!-- icon nc-iconfont icon-slide-arrow -->
+                <!-- icon nc-iconfont icon-ok yes -->
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-
+  
     <!-- 验证码 -->
     <div class="form-row">
       <span class="ipt-wrap">
@@ -58,11 +63,100 @@
 
 <script>
 export default {
-  name: "RegisterMain"
+  name: "RegisterMain",
+  data: function() {
+    return {
+      positionY: 0,
+      isActive:true,
+      isGo:false
+    };
+  },
+  methods: {
+    // mounted(){//这里必须是mouted钩子
+    //   this.track = document.querySelector('.track');
+    //   this.track.style.width = "24px";
+    // },
+    move(e) {
+      this.isGo=false;
+      let odiv = e.target; //获取目标元素
+
+      //算出鼠标相对元素的位置
+      let disX = e.changedTouches[0].clientX - odiv.offsetLeft;
+      // let disY = e.clientY - odiv.offsetTop;
+      document.ontouchmove = e => {
+        //鼠标按下并移动的事件
+        //用鼠标的位置减去鼠标相对元素的位置，得到元素的位置
+        let left = e.changedTouches[0].clientX - disX;
+
+        //绑定元素位置到positionX和positionY上面
+        this.positionY = left;
+
+        //移动当前元素
+        if (left > 0) {
+          if (left < 297) {
+            odiv.style.left = left + "px";
+            this.$refs.xtrack.style.width= left + "px";
+          } else {
+            odiv.style.left = 297 + "px";
+            this.$refs.xtrack.style.width= 297 + "px";
+            this.isActive=false;
+            document.ontouchmove = null;
+            document.ontouchend = null;
+          }
+        }
+        // odiv.style.top = top + 'px';
+      };
+      document.ontouchend = e => {
+        document.ontouchmove = null;
+        document.ontouchend = null;
+
+        this.positionY = 0;
+        //移动当前元素(归零)
+        odiv.style.left = 0 + "px";
+        this.$refs.xtrack.style.width= 0 + "px";
+        this.isGo=true;
+
+      };
+    }
+  }
+  
 };
 </script>
 
 <style scoped>
+/* 以下为用于滑动验证的css */
+.back{
+  transition: width .5s;
+}
+.back2{
+  transition: left .5s;
+}
+.button {
+  position: relative;
+}
+._nc .icon-ok:before {
+  content: "\e606";
+}
+._nc .stage1 .icon.yes {
+  background-position: -60px 0;
+}
+.row-code ._nc .stage1 .icon-ok {
+  color: #8d92a1;
+  font-size: 22px;
+  border: 1px solid #8d92a1;
+  width: 46px;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  left: 0;
+}
+._nc .stage1 .icon {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+}
+
 .main {
   box-shadow: none;
   width: auto;
@@ -671,24 +765,24 @@ input::-ms-reveal {
 }
 /* 提示信息 */
 .text-tip {
-    line-height: 26px;
-    font-size: 14px;
-    padding: 24px 0 0 0;
-    color: #9fa3b0;
-    text-align: center;
-    overflow: hidden;
+  line-height: 26px;
+  font-size: 14px;
+  padding: 24px 0 0 0;
+  color: #9fa3b0;
+  text-align: center;
+  overflow: hidden;
 }
 .text-tip a {
-    display: inline-block;
-    margin-right: 6px;
-    color: #8d92a1;
-    margin: 0 6px 0 -4px;
-    margin-right: 8px;
+  display: inline-block;
+  margin-right: 6px;
+  color: #8d92a1;
+  margin: 0 6px 0 -4px;
+  margin-right: 8px;
 }
 .text-tip a:visited {
-    color: #18c3b1;
+  color: #18c3b1;
 }
 .text-tip .link-signin {
-    color: #18c3b1;
+  color: #18c3b1;
 }
 </style>
