@@ -3,7 +3,15 @@
     <!-- 输入电话 -->
     <span class="ipt-wrap">
       <i class="icon-sign-phone"></i>
-      <input type="tel" class="ipt-tel" placeholder="手机号" name="phone" autocomplete="off" />
+      <input
+        type="tel"
+        class="ipt-tel"
+        placeholder="手机号"
+        name="phone"
+        autocomplete="off"
+        v-model="tel"
+      />
+      <div class="tip-error" v-show="telIsError">{{textTel}}</div>
     </span>
 
     <!-- 滑动验证 -->
@@ -14,13 +22,17 @@
             <div class="slider">
               <div class="label">请向右滑动验证</div>
               <div class="track" v-bind:class="{'back': isGo}" ref="xtrack" style="width: 24px;">
-                <div class="bg-green"  style="width: 345px;" >
+                <div class="bg-green" style="width: 345px;">
                   <div v-show="!isActive">验证通过</div>
                 </div>
               </div>
               <div class="button" style="left: 0px;background: transparent;" @touchstart="move">
-                <div class="icon nc-iconfont" 
-                  v-bind:class="{'icon-slide-arrow': isActive, 'icon-ok': !isActive, 'yes': !isActive,'back2': isGo }" id="nc_1_n1t" style="background: rgb(255, 255, 255);"></div>
+                <div
+                  class="icon nc-iconfont"
+                  v-bind:class="{'icon-slide-arrow': isActive, 'icon-ok': !isActive, 'yes': !isActive,'back2': isGo }"
+                  id="nc_1_n1t"
+                  style="background: rgb(255, 255, 255);"
+                ></div>
                 <!-- icon nc-iconfont icon-slide-arrow -->
                 <!-- icon nc-iconfont icon-ok yes -->
               </div>
@@ -28,8 +40,10 @@
           </div>
         </div>
       </div>
+      <!-- 错误图标 -->
+      <div class="tip-error" v-show="sliderIsError">请滑动完成验证</div>
     </div>
-  
+
     <!-- 验证码 -->
     <div class="form-row">
       <span class="ipt-wrap">
@@ -40,21 +54,30 @@
           placeholder="短信验证码"
           name="phoneCode"
           maxlength="6"
+          v-model="sms"
         />
         <input type="hidden" name="smsType" value="2" />
-        <button type="button" class="btn btn-sms" data-url="/wapi/zppassport/send/smsCode">发送验证码</button>
+        <!-- <button type="button" class="btn btn-sms" data-url="/wapi/zppassport/send/smsCode">发送验证码</button> -->
+        <button type="button" class="btn btn-sms" @click="sendSms">{{textSendSms}}</button>
       </span>
       <!-- 错误图标 -->
-      <div class="tip-error"></div>
+      <div class="tip-error" v-show="smsIsError">{{textSms}}</div>
     </div>
 
     <!-- 注册按钮 -->
-    <button type="submit" class="register">注册</button>
+    <!-- <button type="submit" class="register" >注册</button> -->
+    <button class="register" @click="register">注册</button>
 
     <!-- 提示信息 -->
     <div class="text-tip">
-      <div class="tip-error"></div>
-      <input type="checkbox" class="agree-policy" name="policy" />我已同意
+      <!-- <div class="tip-error"></div> -->
+      <input
+        type="checkbox"
+        class="agree-policy"
+        name="policy"
+        v-bind:checked="checked"
+        @click="CheckedAll"
+      />我已同意
       <router-link to="/introduce" target="_blank">用户协议及隐私政策</router-link>
       <router-link to="/login" class="link-signin">直接登录</router-link>
     </div>
@@ -67,17 +90,77 @@ export default {
   data: function() {
     return {
       positionY: 0,
-      isActive:true,
-      isGo:false
+      isActive: true,
+      isGo: false,
+      sliderIsError: 0,
+      tel: "",
+      textTel: "",
+      telIsError: 0,
+      sms: "",
+      textSms: "",
+      smsIsError: 0,
+      checked: false,
+      textSendSms:"发送验证码",
+      numSms:60,
     };
   },
   methods: {
+    sendSms(){     
+      this.numSms=60; 
+      this.textSendSms=this.numSms+"s";
+      var timer = setInterval (()=> {
+          this.numSms--;
+          this.textSendSms=this.numSms+"s";
+          // console.log(this.textSendSms);
+          // 如果数值小于-1了，就停止计时
+          if (this.numSms == 0) {
+              clearInterval(timer);
+              this.textSendSms = "再次发送验证码";
+          }
+      },1000);
+    },
+    CheckedAll() {
+      this.checked = !this.checked; //选中切换
+    },
+    register() {
+      console.log("注册按钮被点击  " + this.tel);
+      if (this.tel == "") {
+        this.textTel = "请填写手机号";
+        this.telIsError = 1;
+      } else {
+        if (!/^1(3|4|5|6|7|8|9)\d{9}$/.test(this.tel)) {
+          this.textTel = "请正确填写手机号";
+          this.telIsError = 1;
+        } else {
+          this.telIsError = 0;
+          if (this.isActive == true) {
+            this.sliderIsError = 1;
+          } else {
+            this.sliderIsError = 0;
+            if (this.sms == "") {
+              this.textSms = "请填写验证码";
+              this.smsIsError = 1;
+            } else {
+              if (!/^\d{6}$/.test(this.sms)) {
+                this.textSms = "请正确填写验证码";
+                this.smsIsError = 1;
+              } else {
+                this.smsIsError = 0;
+                if (this.checked != true) {
+                  alert("请阅读并同意BOSS直聘用户协议，方可注册");
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     // mounted(){//这里必须是mouted钩子
     //   this.track = document.querySelector('.track');
     //   this.track.style.width = "24px";
     // },
     move(e) {
-      this.isGo=false;
+      this.isGo = false;
       let odiv = e.target; //获取目标元素
 
       //算出鼠标相对元素的位置
@@ -95,11 +178,11 @@ export default {
         if (left > 0) {
           if (left < 297) {
             odiv.style.left = left + "px";
-            this.$refs.xtrack.style.width= left + "px";
+            this.$refs.xtrack.style.width = left + "px";
           } else {
             odiv.style.left = 297 + "px";
-            this.$refs.xtrack.style.width= 297 + "px";
-            this.isActive=false;
+            this.$refs.xtrack.style.width = 297 + "px";
+            this.isActive = false;
             document.ontouchmove = null;
             document.ontouchend = null;
           }
@@ -113,23 +196,79 @@ export default {
         this.positionY = 0;
         //移动当前元素(归零)
         odiv.style.left = 0 + "px";
-        this.$refs.xtrack.style.width= 0 + "px";
-        this.isGo=true;
-
+        this.$refs.xtrack.style.width = 0 + "px";
+        this.isGo = true;
       };
     }
   }
-  
 };
 </script>
 
 <style scoped>
-/* 以下为用于滑动验证的css */
-.back{
-  transition: width .5s;
+/* 错误图标css */
+div {
+  padding: 0;
+  margin: 0;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: none;
 }
-.back2{
-  transition: left .5s;
+::selection {
+  color: #fff;
+  background: #00d7c6;
+}
+::-moz-selection {
+  color: #fff;
+  background: #00d7c6;
+}
+::-webkit-scrollbar-track-piece {
+  background-color: #fff;
+  border-radius: 0;
+}
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-thumb {
+  height: 50px;
+  background-color: #d1d4db;
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+  height: 50px;
+  background-color: #bfc1c9;
+  border-radius: 5px;
+}
+.tip-error {
+  text-align: center;
+  color: #fc6c38;
+  height: 29px;
+  line-height: 18px;
+  padding-top: 7px;
+}
+.tip-error {
+  display: block;
+  position: absolute;
+  left: 3px;
+  top: 45px;
+  height: 18px;
+  padding: 0 0 0 27px;
+  /* background: url(https://static.zhipin.com/zhipin-geek/v73/web/geek/images/icons.png) no-repeat 0 -1059px; */
+  background: url("../../../assets/images/icons.png") no-repeat 0 -1059px;
+  background-size: 18px auto;
+  color: #fc703e;
+  text-align: left;
+}
+@media (max-width: 800px) {
+  .page-sign .sign-form .tip-error {
+    display: none;
+  }
+}
+
+/* 以下为用于滑动验证的css */
+.back {
+  transition: width 0.5s;
+}
+.back2 {
+  transition: left 0.5s;
 }
 .button {
   position: relative;
