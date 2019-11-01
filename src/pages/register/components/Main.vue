@@ -81,6 +81,25 @@
       <router-link to="/introduce" target="_blank">用户协议及隐私政策</router-link>
       <router-link to="/login" class="link-signin">直接登录</router-link>
     </div>
+
+    <!-- 遮罩层 -->
+    <div class="dialog-wrap dialog-prop-default" v-show="showDialog">
+      <div class="dialog-layer"></div>
+      <div class="dialog-container">
+        <div class="dialog-title">
+          <h3 class="title">提示</h3>
+          <a href="javascript:;" class="close" @click="closeDialog">
+            <i class="icon-close"></i>
+          </a>
+        </div>
+        <div class="dialog-con">{{dialogText}}</div>
+        <div class="dialog-footer">
+          <div class="btns">
+            <span class="btn btn-sure"  @click="closeDialog">知道了</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -100,24 +119,52 @@ export default {
       textSms: "",
       smsIsError: 0,
       checked: false,
-      textSendSms:"发送验证码",
-      numSms:60,
+      textSendSms: "发送验证码",
+      numSms: 60,
+      showDialog:false,
+      dialogText:"",
     };
   },
   methods: {
-    sendSms(){     
-      this.numSms=60; 
-      this.textSendSms=this.numSms+"s";
-      var timer = setInterval (()=> {
-          this.numSms--;
-          this.textSendSms=this.numSms+"s";
-          // console.log(this.textSendSms);
-          // 如果数值小于-1了，就停止计时
-          if (this.numSms == 0) {
-              clearInterval(timer);
-              this.textSendSms = "再次发送验证码";
+    closeDialog(){
+      this.showDialog=false;
+    },
+    sendSms() {
+      if (this.tel == "") {
+        this.textTel = "请填写手机号";
+        this.telIsError = 1;
+      } else {
+        if (!/^1(3|4|5|6|7|8|9)\d{9}$/.test(this.tel)) {
+          this.textTel = "请正确填写手机号";
+          this.telIsError = 1;
+        } else {
+          this.telIsError = 0;
+          if (this.isActive == true) {
+            this.sliderIsError = 1;
+          }else{
+            // 判断手机号码是否重复
+            if(this.tel=="18122103386"){
+              this.showDialog=true;
+              this.dialogText="账号已经存在";
+            }else{
+              this.numSms = 60;
+              this.textSendSms = this.numSms + "s";
+              var timer = setInterval(() => {
+                this.numSms--;
+                this.textSendSms = this.numSms + "s";
+                // console.log(this.textSendSms);
+                // 如果数值小于-1了，就停止计时
+                if (this.numSms == 0) {
+                  clearInterval(timer);
+                  this.textSendSms = "再次发送验证码";
+                }
+              }, 1000);
+            }
           }
-      },1000);
+        }
+      }
+
+
     },
     CheckedAll() {
       this.checked = !this.checked; //选中切换
@@ -148,12 +195,18 @@ export default {
                 this.smsIsError = 0;
                 if (this.checked != true) {
                   alert("请阅读并同意BOSS直聘用户协议，方可注册");
+                }else{
+                  if(this.sms!="123456"){  //判断验证码是否正确，这里默认设为123456
+                    this.showDialog=true;
+                    this.dialogText="验证码不正确";
+                  }
                 }
               }
             }
           }
         }
       }
+
     },
     // mounted(){//这里必须是mouted钩子
     //   this.track = document.querySelector('.track');
@@ -185,6 +238,8 @@ export default {
             this.isActive = false;
             document.ontouchmove = null;
             document.ontouchend = null;
+            // 清除错误图标
+            this.sliderIsError = 0;
           }
         }
         // odiv.style.top = top + 'px';
@@ -205,6 +260,45 @@ export default {
 </script>
 
 <style scoped>
+/* 遮罩层 */
+a,div,h3,i,span{padding:0;margin:0;-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:none;}
+a{text-decoration:none;color:#414a60;}
+a:active,a:focus,a:hover{outline:0;}
+a:hover{color:#00d7c6;text-decoration:none;-webkit-transition:all linear .2s;transition:all linear .2s;}
+.btn:hover{-webkit-transition:all linear .2s;transition:all linear .2s;}
+::selection{color:#fff;background:#00d7c6;}
+::-moz-selection{color:#fff;background:#00d7c6;}
+.btn:active,.btn:hover{-webkit-transition:all linear .2s;transition:all linear .2s;}
+.btn{display:inline-block;min-width:112px;box-sizing:content-box;height:36px;line-height:36px;border:1px #5dd5c8 solid;font-size:16px;color:#fff;letter-spacing:1px;background:#5dd5c8;text-align:center;cursor:pointer;}
+.btn:hover{background-color:#6adbcf;color:#fff;}
+.dialog-footer .btns .btn{height:32px;line-height:32px;min-width:42px;padding:0 25px;font-size:14px;}
+.dialog-wrap{position:fixed;width:100%;height:100%;top:0;left:0;z-index:1010;}
+.dialog-layer{position:fixed;left:0;top:0;width:100%;height:100%;background:#252830;background:rgba(37,40,48,.7);z-index:1002;}
+.dialog-container{position:absolute;top:50%;left:50%;margin:-93px 0 0 -167px;background-color:#fff;z-index:1003;box-shadow:0 0 14px rgba(0,0,0,.11);}
+.dialog-title{font-size:14px;line-height:26px;font-weight:400;}
+.dialog-title .close{position:absolute;width:24px;height:24px;right:8px;top:8px;z-index:1;}
+.icon-close{display:inline-block;width:24px;height:24px;position:relative;vertical-align:top;}
+.icon-close:after,.icon-close:before{content:'';position:absolute;width:16px;height:1px;background:#d1d4db;-webkit-transform:rotate(45deg);transform:rotate(45deg);left:4px;top:12px;}
+.icon-close:after{-webkit-transform:rotate(-45deg);transform:rotate(-45deg);}
+.dialog-title .close:hover{background-color:#ddd;}
+.dialog-title .close:hover .icon-close:after,.dialog-title .close:hover .icon-close:before{background:#363636;}
+.dialog-prop-default .dialog-container{width:400px;padding:24px 30px;margin-left:-230px;}
+.dialog-prop-default .dialog-container{margin-left:-230px;}
+.dialog-prop-default .dialog-title h3.title{font-weight:400;}
+.dialog-prop-default .dialog-footer .btns .btn:first-of-type{margin-left:0;}
+.dialog-con{max-height:100%;}
+.dialog-footer{margin-top:10px;position:relative;}
+.dialog-footer .btns{text-align:right;}
+.dialog-footer .btns .btn{margin:0 0 0 20px;-webkit-transition:none;transition:none;}
+@media (max-width:374px){
+.dialog-container{position:absolute;width:302px;margin:-93px 0 0 -151px;}
+}
+@media (max-width:800px){
+ .dialog-prop-default .dialog-container{width:260px;margin-left:-160px;}
+ .dialog-prop-default .dialog-footer .btns{text-align:center;}
+ .dialog-prop-default .dialog-footer .btn:first-of-type{margin-left:0;}
+}
+
 /* 错误图标css */
 div {
   padding: 0;
