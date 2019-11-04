@@ -1,6 +1,25 @@
 <template>
   <div class="main">
     <div class="job-category">
+      <template>
+        <dl v-for="job of jobs" :key="job.id">
+          <dt>
+            <img v-bind:src="job.img"/>
+
+            <div class="sub-name">
+              <h4>{{job.name}}</h4>
+            </div>
+          </dt>
+          <dd>
+            <template v-for="test of job.link">
+              <a :href="test.href">{{test.names}}</a>
+            </template>
+          </dd>
+        </dl>
+      </template>
+    </div>
+    <!-- <div class="job-category">
+
       <dl>
         <dt>
           <img src="../../../assets/images/technology.png" />
@@ -19,6 +38,7 @@
           <a href="/c101010100-p100203/">iOS</a>
         </dd>
       </dl>
+
       <dl>
         <dt>
           <img src="../../../assets/images/product.png" />
@@ -98,7 +118,7 @@
           <a href="/c101010100-p150103/">HRBP</a>
         </dd>
       </dl>
-    </div>
+    </div> -->
     <div class="report-tips-wrap">
       <div class="report-tips">
         <p>违法和不良信息举报邮箱：jubao@kanzhun.com</p>
@@ -120,7 +140,210 @@
 
 <script>
 export default {
-  name: "IndexMain"
+  name: "IndexMain",
+  data: function() {
+    return {
+      jobs: [
+        {
+          id:1,
+          name: "技术",
+          // require('./assets/logo.png')
+          // img: "require('../../../assets/images/technology.png')",
+          img: "./static/images/technology.png",
+          link: [
+            {
+              names: "Java",
+              href: "/c101010100-p100101/"
+            },
+            {
+              names: "PHP",
+              href: "/c101010100-p100103/"
+            },
+            {
+              names: "Web前端",
+              href: "/c101010100-p100901/"
+            },
+            {
+              names: "数据挖掘",
+              href: "/c101010100-p100104/"
+            },
+            {
+              names: "C++",
+              href: "/c101010100-p100102/"
+            },
+            {
+              names: "Python",
+              href: "/c101010100-p100109/"
+            },
+            {
+              names: "Android",
+              href: "/c101010100-p100202/"
+            },
+            {
+              names: "iOS",
+              href: "/c101010100-p100203/"
+            }
+          ]
+        },
+        {
+          id:2,
+          name: "产品",
+          // img: "../../../assets/images/product.png",
+          img: "./static//images/product.png",
+          link: [
+            {
+              names: "产品经理",
+              href: "/c101010100-p110101/"
+            },
+            {
+              names: "产品助理",
+              href: "/c101010100-p110104/"
+            },
+            {
+              names: "网页产品经理",
+              href: "/c101010100-p110102/"
+            },
+            {
+              names: "数据产品经理",
+              href: "/c101010100-p110105/"
+            }
+          ]
+        },
+        {
+          id:3,
+          name: "设计",
+          // img: "../../../assets/images/designer.png",
+          img: "./static/images/designer.png",
+          link: [
+            {
+              names: "UI设计师",
+              href: "/c101010100-p120105/"
+            },
+            {
+              names: "平面设计师",
+              href: "/c101010100-p120106/"
+            },
+            {
+              names: "交互设计师",
+              href: "/c101010100-p120201/"
+            },
+            {
+              names: "设计总监",
+              href: "/c101010100-p120402/"
+            }
+          ]
+        },
+        {
+          id:4,
+          name: "市场",
+          // img: "../../../assets/images/market.png",
+          img: "./static//images/market.png",
+          link: [
+            {
+              names: "市场营销",
+              href: "/c101010100-p140101/"
+            },
+            {
+              names: "商务渠道",
+              href: "/c101010100-p140107/"
+            },
+            {
+              names: "品牌公关",
+              href: "/c101010100-p140203/"
+            },
+            {
+              names: "市场总监",
+              href: "/c101010100-p140401/"
+            },
+            {
+              names: "策划经理",
+              href: "/c101010100-p170204/"
+            },
+            {
+              names: "活动策划",
+              href: "/c101010100-p140109/"
+            },
+            {
+              names: "SEO",
+              href: "/c101010100-p140105/"
+            },
+            {
+              names: "SEM",
+              href: "/c101010100-p140106/"
+            }
+          ]
+        },
+        {
+          id:5,
+          name: "运营",
+          // img: "../../../assets/images/operate.png",
+          img: "./static/images/operate.png",
+          link: [
+            {
+              names: "用户运营",
+              href: "/c101010100-p130101/"
+            },
+            {
+              names: "产品运营",
+              href: "/c101010100-p130102/"
+            },
+            {
+              names: "新媒体运营",
+              href: "/c101010100-p130111/"
+            },
+            {
+              names: "运营总监",
+              href: "/c101010100-p130402/"
+            },
+            {
+              names: "商家运营",
+              href: "/c101010100-p130117/"
+            },
+            {
+              names: "电商运营",
+              href: "/c101010100-p130117/"
+            },
+            {
+              names: "编辑",
+              href: "/c101010100-p170102/"
+            },
+            {
+              names: "客服经理",
+              href: "/c101010100-p130304/"
+            }
+          ]
+        },
+        {
+          id:6,
+          name: "职能/高级管理",
+          // img: "../../../assets/images/senior.png",
+          img: "./static/images/senior.png",
+          link: [
+            {
+              names: "人力资源",
+              href: "/c101010100-p150101/"
+            },
+            {
+              names: "行政",
+              href: "/c101010100-p150204/"
+            },
+            {
+              names: "财务",
+              href: "/c101010100-p150303/"
+            },
+            {
+              names: "会计",
+              href: "/c101010100-p150301/"
+            },
+            {
+              names: "HRBP",
+              href: "/c101010100-p150103/"
+            }
+          ]
+        }
+      ]
+    };
+  }
 };
 </script>
 
