@@ -595,11 +595,11 @@
         </div>
         <div class="filter-bar">
             <ul>
-                <li @click="showList" :class="{'selected':checked}">经验</li>
-                <li>学历</li>
-                <li>薪资</li>
-                <li>规模</li>
-                <li>融资</li>
+                <li @click="showList1" :class="{'selected':checked1}">经验</li>
+                <li @click="showList2" :class="{'selected':checked2}">学历</li>
+                <li @click="showList3" :class="{'selected':checked3}">薪资</li>
+                <li @click="showList4" :class="{'selected':checked4}">规模</li>
+                <li @click="showList5" :class="{'selected':checked5}">融资</li>
             </ul>
         </div>
         <!-- display:block 激活遮罩-->
@@ -607,31 +607,31 @@
             <div class="scroller" style="transition-timing-function: cubic-bezier(0.1, 0.57, 0.1, 1); transition-duration: 0ms; transform: translate(0px, 0px) translateZ(0px);">
                 <ul>
                     <!-- selected 激活下拉 -->
-                    <li class="filter-li " :class="{'selected':checked}">
+                    <li class="filter-li " :class="{'selected':checked1}">
                         <ul>
-                                       <li><a href="/c101280100-p100901/" class="selected" ka="sel-exp-0">不限</a></li>
-                                       <li><a href="/c101280100-p100901/e_108/" ka="sel-exp-108">在校生</a></li>
-                                       <li><a href="/c101280100-p100901/e_102/" ka="sel-exp-102">应届生</a></li>
-                                       <li><a href="/c101280100-p100901/e_103/" ka="sel-exp-103">1年以内</a></li>
-                                       <li><a href="/c101280100-p100901/e_104/" ka="sel-exp-104">1-3年</a></li>
-                                       <li><a href="/c101280100-p100901/e_105/" ka="sel-exp-105">3-5年</a></li>
-                                       <li><a href="/c101280100-p100901/e_106/" ka="sel-exp-106">5-10年</a></li>
-                                       <li><a href="/c101280100-p100901/e_107/" ka="sel-exp-107">10年以上</a></li>
+                            <li><a href="#1" :class="{'selected':checkList1}" @click="list1($event)">不限</a></li>
+                            <li><a href="#2" :class="{'selected':checkList2}" @click="list1($event)">在校生</a></li>
+                            <li><a href="#3" :class="{'selected':checkList3}" @click="list1($event)">应届生</a></li>
+                            <li><a href="#4" :class="{'selected':checkList4}" @click="list1($event)">1年以内</a></li>
+                            <li><a href="#5" :class="{'selected':checkList5}" @click="list1($event)">1-3年</a></li>
+                            <li><a href="#6" :class="{'selected':checkList6}" @click="list1($event)">3-5年</a></li>
+                            <li><a href="#7" :class="{'selected':checkList7}" @click="list1($event)">5-10年</a></li>
+                            <li><a href="#8" :class="{'selected':checkList8}" @click="list1($event)">10年以上</a></li>
                         </ul>
                     </li>
-                    <li class="filter-li">
+                    <li class="filter-li" :class="{'selected':checked2}">
                         <ul>
-                                    <li><a href="/c101280100-p100901/" class="selected" ka="sel-degree-0">不限</a></li>
-                                    <li><a href="/c101280100-p100901/d_209/" ka="sel-degree-209">初中及以下</a></li>
-                                    <li><a href="/c101280100-p100901/d_208/" ka="sel-degree-208">中专/中技</a></li>
-                                    <li><a href="/c101280100-p100901/d_206/" ka="sel-degree-206">高中</a></li>
-                                    <li><a href="/c101280100-p100901/d_202/" ka="sel-degree-202">大专</a></li>
-                                    <li><a href="/c101280100-p100901/d_203/" ka="sel-degree-203">本科</a></li>
-                                    <li><a href="/c101280100-p100901/d_204/" ka="sel-degree-204">硕士</a></li>
-                                    <li><a href="/c101280100-p100901/d_205/" ka="sel-degree-205">博士</a></li>
+                            <li><a href="/c101280100-p100901/" class="selected" ka="sel-degree-0">不限</a></li>
+                            <li><a href="/c101280100-p100901/d_209/" ka="sel-degree-209">初中及以下</a></li>
+                            <li><a href="/c101280100-p100901/d_208/" ka="sel-degree-208">中专/中技</a></li>
+                            <li><a href="/c101280100-p100901/d_206/" ka="sel-degree-206">高中</a></li>
+                            <li><a href="/c101280100-p100901/d_202/" ka="sel-degree-202">大专</a></li>
+                            <li><a href="/c101280100-p100901/d_203/" ka="sel-degree-203">本科</a></li>
+                            <li><a href="/c101280100-p100901/d_204/" ka="sel-degree-204">硕士</a></li>
+                            <li><a href="/c101280100-p100901/d_205/" ka="sel-degree-205">博士</a></li>
                         </ul>
                     </li>
-                    <li class="filter-li">
+                    <li class="filter-li" :class="{'selected':checked3}">
                         <ul>
                                     <li><a href="/c101280100-p100901/" class="selected" ka="sel-salary-0">不限</a></li>
                                     <li><a href="/c101280100-p100901/y_1/" ka="sel-salary-1">3K以下</a></li>
@@ -644,7 +644,7 @@
                                     <li><a href="/c101280100-p100901/y_8/" ka="sel-salary-8">50K以上</a></li>
                         </ul>
                     </li>
-                    <li class="filter-li">
+                    <li class="filter-li" :class="{'selected':checked4}">
                         <ul>
                                     <li><a href="/c101280100-p100901/" class="selected" ka="sel-scale-0">不限</a></li>
 
@@ -662,7 +662,7 @@
 
                         </ul>
                     </li>
-                    <li class="filter-li">
+                    <li class="filter-li" :class="{'selected':checked5}">
                         <ul>
                                     <li><a href="/c101280100-p100901/" class="selected" ka="sel-stage-0">不限</a></li>
                                     <li><a href="/c101280100-p100901/t_801/" ka="sel-stage-801">未融资</a></li>
@@ -686,20 +686,137 @@ export default {
   name: "ListMain",
     data: function() {
     return {
-      checked:0,
+      checked1:0,
+      checked2:0,
+      checked3:0,
+      checked4:0,
+      checked5:0,
+
+      checkList1:1,
+      checkList2:0,
+      checkList3:0,
+      checkList4:0,
+      checkList5:0,
+      checkList6:0,
+      checkList7:0,
+      checkList8:0,
+    //   number:0,
+
       activeDisplay:"none"
     };
   },
   methods: {
-    showList: function() {
+    showList1: function() {
+        this.checked2=this.checked3=this.checked4=this.checked5=0;
+        if(this.checked1==1){
+            this.checked1=0;
+            this.activeDisplay="none";
+        }else{
+            this.checked1=1;
+            this.activeDisplay="block";
+        }
+    },
+    showList2: function() {
+        this.checked1=this.checked3=this.checked4=this.checked5=0;
+        if(this.checked2==1){
+            this.checked2=0;
+            this.activeDisplay="none";
+        }else{
+            this.checked2=1;
+            this.activeDisplay="block";
+        }
+    },
+    showList3: function() {
+        this.checked1=this.checked2=this.checked4=this.checked5=0;
+        if(this.checked3==1){
+            this.checked1=0;
+            this.activeDisplay="none";
+        }else{
+            this.checked3=1;
+            this.activeDisplay="block";
+        }
+    },
+    showList4: function() {
+        this.checked1=this.checked2=this.checked3=this.checked5=0;
+        if(this.checked4==1){
+            this.checked1=0;
+            this.activeDisplay="none";
+        }else{
+            this.checked4=1;
+            this.activeDisplay="block";
+        }
+    },
+    showList5: function() {
+        this.checked1=this.checked2=this.checked3=this.checked4=0;
+        if(this.checked5==1){
+            this.checked1=0;
+            this.activeDisplay="none";
+        }else{
+            this.checked5=1;
+            this.activeDisplay="block";
+        }
+    },
+    list1: function (event) {
+        //阻止浏览器默认行为兼容性写法 
+        event.preventDefault ? event.preventDefault() : (event.returnValue = false);
+        //获取点击对象      
+        var el = event.currentTarget;
+        // alert("当前对象的内容：" + el.href.substring(el.href.length-2));
+        var number=el.href.substring(el.href.length-2);
+        // if(number=="#1"){
+        //     this.checkList1=1;
+        //     console.log(1);
+        // }else if(number=="#2"){
+        //     this.checkList2=1;
+        //     console.log(2);
+        // }else if(number=="#3"){
+        //     this.checkList3=1;
+        //     console.log(3);
+        // }else if(number=="#4"){
+        //     console.log(4);
+        // }else if(number=="#5"){
+        //     console.log(5);
+        // }else if(number=="#6"){
+        //     console.log(6);
+        // }else if(number=="#7"){
+        //     console.log(7);
+        // }else{
+        //     console.log(8);
+        // }
 
-      if(this.checked==1){
-        this.checked=0;
-        this.activeDisplay="none";
-      }else{
-        this.checked=1;
-        this.activeDisplay="block";
-      }
+        switch (number) {
+            case "#1":
+               this.checkList1=this.checkList2=this.checkList3=this.checkList4=this.checkList5=this.checkList6=this.checkList7=this.checkList8=0;
+               this.checkList1=1;
+                break;
+            case "#2":
+                this.checkList1=this.checkList2=this.checkList3=this.checkList4=this.checkList5=this.checkList6=this.checkList7=this.checkList8=0;
+                this.checkList2=1;
+                break;
+            case "#3":
+                this.checkList1=this.checkList2=this.checkList3=this.checkList4=this.checkList5=this.checkList6=this.checkList7=this.checkList8=0;
+                this.checkList3=1;
+                break;
+            case "#4":
+                this.checkList1=this.checkList2=this.checkList3=this.checkList4=this.checkList5=this.checkList6=this.checkList7=this.checkList8=0;
+                this.checkList4=1;
+                break;
+            case "#5":
+                this.checkList1=this.checkList2=this.checkList3=this.checkList4=this.checkList5=this.checkList6=this.checkList7=this.checkList8=0;
+                this.checkList5=1;
+                break;
+            case "#6":
+                this.checkList1=this.checkList2=this.checkList3=this.checkList4=this.checkList5=this.checkList6=this.checkList7=this.checkList8=0;
+                this.checkList6=1;
+            case "#7":
+                this.checkList1=this.checkList2=this.checkList3=this.checkList4=this.checkList5=this.checkList6=this.checkList7=this.checkList8=0;
+               this.checkList7=1;
+                break;
+            case "#8":
+                this.checkList1=this.checkList2=this.checkList3=this.checkList4=this.checkList5=this.checkList6=this.checkList7=this.checkList8=0;
+                this.checkList8=1;
+                break;
+        } 
     }
   }
 };
