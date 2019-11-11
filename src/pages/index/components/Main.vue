@@ -12,7 +12,8 @@
           </dt>
           <dd>
             <template v-for="test of job.link">
-              <a :href="test.href">{{test.names}}</a>
+              <!-- <a :href="test.href">{{test.names}}</a> -->
+              <router-link :to="test.href">{{test.names}}</router-link>
             </template>
           </dd>
         </dl>
@@ -161,7 +162,7 @@ export default {
             },
             {
               names: "Web前端",
-              href: "/c101010100-p100901/"
+              href: "/list/"
             },
             {
               names: "数据挖掘",
@@ -456,7 +457,7 @@ body ::-webkit-scrollbar-thumb:hover {
 }
 .job-category dt h4 {
   font-size: 15px;
-  margin-top: 14px;
+  margin-top: 20px;
 }
 .job-category dt img {
   width: 50px;

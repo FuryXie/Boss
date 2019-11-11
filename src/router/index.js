@@ -4,10 +4,13 @@ import Index from '@/pages/index/Index'
 import Register from '@/pages/register/Register'
 import Introduce from '@/pages/introduce/Introduce'
 import Login from '@/pages/login/Login'
+import List from '@/pages/list/List'
 
 Vue.use(Router)
 
 export default new Router({
+  // 去掉 “#”
+  // mode: 'history',
   routes: [
     {
       path: '/',
@@ -23,11 +26,16 @@ export default new Router({
       path: '/introduce',
       name: 'Introduce',
       component: Introduce
-    }
-    , {
+    }, 
+    {
       path: '/login',
       name: 'Login',
       component: Login
+    },
+    {
+      path: '/list',
+      name: 'List',
+      component: List
     }
   ]
 })
