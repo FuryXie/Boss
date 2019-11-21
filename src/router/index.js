@@ -5,6 +5,7 @@ import Register from '@/pages/register/Register'
 import Introduce from '@/pages/introduce/Introduce'
 import Login from '@/pages/login/Login'
 import List from '@/pages/list/List'
+import Detail from '@/pages/detail/Detail'
 
 Vue.use(Router)
 
@@ -36,6 +37,10 @@ export default new Router({
       path: '/list',
       name: 'List',
       component: List
+    }, {
+      path: '/detail',
+      name: 'Detail',
+      component: Detail
     }
   ]
 })
