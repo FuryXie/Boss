@@ -1,14 +1,27 @@
+# neteasemusic
 
+> A vue project
 
-# Boss
+## Build Setup
 
-## 项目说明
+``` bash
+# install dependencies
+npm install
 
-- 作者：谢博琦
-- 作者邮箱：xiebq17@foxmail.com
-- 项目介绍：
-  - 使用Vue写一个boss直聘的移动端页
-  - 目前完成首页、注册、登录、拖拽验证
-  - 正在写列表页面
-  - 稍后完成详情页面
-  - 晚点把文档写详细点
+# serve with hot reload at localhost:8080
+npm run dev
+
+# build for production with minification
+npm run build
+
+# build for production and view the bundle analyzer report
+npm run build --report
+
+# run unit tests
+npm run unit
+
+# run all tests
+npm test
+```
+
+For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
