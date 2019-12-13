@@ -1,6 +1,6 @@
 <template>
     <!-- 滑动验证 -->
-      <div class="form-row">
+      <!-- <div class="form-row"> -->
         <div class="row-code nc-container" id="row-code" style="display: block;">
           <div class="_nc">
             <div id="nc_1-stage-1" class="stage stage1" style="display: block;">
@@ -25,7 +25,7 @@
             </div>
           </div>
         </div>
-      </div>
+      <!-- </div> -->
 </template>
 
 <script>
@@ -63,6 +63,8 @@ export default {
             odiv.style.left = 297 + "px";
             this.$refs.xtrack.style.width = 297 + "px";
             this.isActive = false;
+            this.$store.dispatch('changeIsActiveVuex',false);
+
             document.ontouchmove = null;
             document.ontouchend = null;
           }

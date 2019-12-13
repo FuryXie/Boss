@@ -1,5 +1,5 @@
 <template>
-  <div class="download-bar">
+  <div class="download-bar" v-if="this.$store.state.showBar">
     <!-- <a href="/register" ka="footer-signup"> -->
     <router-link to="/register" tag="div">
       <span class="btn-down">立即注册</span>

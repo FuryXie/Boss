@@ -1,12 +1,15 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import persistedState from 'vuex-persistedstate'
+// 这个是持久化vuex
+// import persistedState from 'vuex-persistedstate'
 
 Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
       city: '北京',
       showTopBar: true,
+      showBar: true,
+      isActiveVuex:true,
     },
 
     actions: {
@@ -15,7 +18,13 @@ export default new Vuex.Store({
       },
       changeShowTopBar(ctx, showTopBar) {
         ctx.commit('changeShowTopBar', showTopBar)
-      }
+      },
+      changeShowBar(ctx, showBar) {
+        ctx.commit('changeShowBar', showBar)
+      },
+            changeIsActiveVuex(ctx, isActiveVuex) {
+              ctx.commit('changeIsActiveVuex', isActiveVuex)
+            }
     },
     
     mutations: {
@@ -24,9 +33,15 @@ export default new Vuex.Store({
       },
       changeShowTopBar(state, showTopBar) {
         state.showTopBar = showTopBar
-      }
+      },
+      changeShowBar(state, showBar) {
+        state.showBar = showBar
+      },
+            changeIsActiveVuex(state, isActiveVuex) {
+              state.isActiveVuex = isActiveVuex
+            }
     },
 
-  plugins: [persistedState()]
+  // plugins: [persistedState()]
 })
 

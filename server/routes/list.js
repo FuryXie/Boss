@@ -103,47 +103,69 @@ router.get("/logout", (req, res) => {
   }
 })
 
-// 列表
+
+
+// 动态列表刷新
 router.get("/list", (req, res) => {
-    // req.on("data", (buf) => {
-    //   var obj = qs.parse(buf.toString()); //得到的请求到的数据
-    //   var start = obj.start;
-    //   console.log("!!!!!!!!!start: " + start);
-      
-    // })
-  
-    console.log("list is run!");
-    var output = {};
+  // req.on("data", (buf) => {
+  //   var obj = qs.parse(buf.toString()); //得到的请求到的数据
+  //   var start = obj.start;
+  //   console.log("!!!!!!!!!start: " + start);
+  // })
+  console.log("list is run!");
+  var output = {};
+  // 目前就是传值出问题！
+  // var start = req.params.start;
+  // var long = req.params.long;
 
-    // 目前就是传值出问题！
-    // var start = req.params.start;
-    // var long = req.params.long;
-    var start = (req.query.start)-5;
-    // var start = 0;
-    var long = 5;
-    console.log("start:" + start);
-    console.log(long);
+  var start = (req.query.start)-5;
+  var long = 5;
 
+  // if (start == 0) {
+  //   start = 0;
+  // }else{
+  //   start = start - 5;
+  // }
+  // var long = req.query.long;
 
-
-
-    //从连接池中获取链接
-    pool.getConnection((err, conn) => {
+  // var start = 0;
+  // var long = 10;
+  console.log("start:" + start);
+  console.log("long:" + long);
+  //从连接池中获取链接
+  pool.getConnection((err, conn) => {
+    if (err) throw err;
+    var sql = "SELECT href,imgSrc,Job,Salary,Business,location,WorkExperience,EducationBackground FROM list LIMIT ?,? "
+    conn.query(sql, [start, long], (err, result) => {
       if (err) throw err;
-      var sql = "SELECT href,imgSrc,Job,Salary,Business,location,WorkExperience,EducationBackground FROM list LIMIT ?,? "
-
-      conn.query(sql, [start, long], (err, result) => {
-        if (err) throw err;
-        console.log(result);
-        output.data = result;
-        res.json(result); //发送数据json
-
-      })
-      conn.release();
+      console.log(result);
+      output.data = result;
+      res.json(result); //发送数据json
     })
+    conn.release();
+  })
+})
 
-
-
+// 初始化列表
+router.get("/first", (req, res) => {
+  console.log("first is run!");
+  var output = {};
+  var start = 0;
+  var long = 10;
+  console.log("start:" + start);
+  console.log("long:" + long);
+  //从连接池中获取链接
+  pool.getConnection((err, conn) => {
+    if (err) throw err;
+    var sql = "SELECT href,imgSrc,Job,Salary,Business,location,WorkExperience,EducationBackground FROM list LIMIT ?,? "
+    conn.query(sql, [start, long], (err, result) => {
+      if (err) throw err;
+      console.log(result);
+      output.data = result;
+      res.json(result); //发送数据json
+    })
+    conn.release();
+  })
 })
 
 

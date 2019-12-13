@@ -17,15 +17,15 @@ router.use(session({
 router.post("/login", (req, res) => {
   req.on("data", (buf) => {
     var obj = qs.parse(buf.toString()); //得到的请求到的数据
-    var uname = obj.uname;
-    var upwd = obj.upwd;
-    console.log(uname);
-    console.log(upwd);
+    var tel = obj.tel;
+    var pwd = obj.pwd;
+    console.log("tel:"+tel);
+    console.log("pwd"+pwd);
     //从连接池中获取链接
     pool.getConnection((err, conn) => {
       if (err) throw err;
-      var sql = "SELECT upwd FROM users WHERE uname = ?";
-      conn.query(sql, [uname], (err, result) => {
+      var sql = "SELECT pwd FROM users WHERE tel = ?";
+      conn.query(sql, [tel], (err, result) => {
         if (err) throw err;
         if (result[0] == undefined) {
           res.json({
@@ -34,20 +34,20 @@ router.post("/login", (req, res) => {
           })
         } else {
           console.log(result);
-          console.log("用户密码：" + upwd);
-          console.log("数据库中密码：" + result[0].upwd);
-          console.log("用户密码：" + typeof (upwd));
-          console.log("数据库中密码：" + typeof (result[0].upwd));
-          if (upwd == result[0].upwd) {
-            req.session.userName = uname; // 登录成功，设置 session
+          console.log("用户密码：" + pwd);
+          console.log("数据库中密码：" + result[0].pwd);
+          console.log("用户密码：" + typeof (pwd));
+          console.log("数据库中密码：" + typeof (result[0].pwd));
+          if (pwd == result[0].pwd) {
+            // req.session.userName = tel; // 登录成功，设置 session
             // 设置session
-            req.session.username = uname;
+            req.session.username = tel;
             console.log("req.session.username=" + JSON.stringify(req.session.username));
 
             res.json({
               code: "1",
               msg: "验证成功！",
-              // uname: uname
+              // tel: tel
             });
           } else {
             res.json({

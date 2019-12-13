@@ -7,11 +7,20 @@
     </div>
 
     <!-- 密码登录 -->
-    <div class="login-pwd" v-show="show">
+    <div class="login-pwd" v-if="show">
       <!-- 输入电话 -->
       <span class="ipt-wrap">
         <i class="icon-sign-phone"></i>
-        <input type="tel" class="ipt-tel" placeholder="手机号" name="phone" autocomplete="off" />
+        <input
+          type="tel"
+          class="ipt-tel"
+          v-model="tel"
+          placeholder="手机号"
+          name="phone"
+          autocomplete="off"
+        />
+        <div class="tip-error" v-show="telIsError">{{textTel}}</div>
+        <!-- <div class="tip-error">请输入手机号码</div> -->
       </span>
 
       <!-- 密码 -->
@@ -20,30 +29,36 @@
           <i class="icon-sign-pwd"></i>
           <input
             type="password"
-            class="ipt ipt-sms required"
-            placeholder="短信验证码"
+            class="ipt ipt-pwd required"
+            placeholder="密码"
             name="phoneCode"
             maxlength="20"
+            v-model="pwd"
           />
         </span>
         <!-- 错误图标 -->
-        <div class="tip-error"></div>
+        <div class="tip-error" v-show="pwdError">{{textPwd}}</div>
+        <!-- 密码错误 or 密码为空 -->
       </div>
 
       <!-- 滑动验证 -->
-      <drag></drag>
+      <div class="form-row">
+        <drag></drag>
+        <div class="tip-error" v-show="sliderIsError">请滑动完成验证</div>
+      </div>
 
       <!-- 登录按钮 -->
-      <button type="submit" class="login">登录</button>
+      <button type="button" class="login" @click="login1">登录</button>
 
       <!-- 提示信息 -->
       <div class="text-tip">
-        <div class="tip-error"></div>没有账号
+        <!-- <div class="tip-error"></div> -->
+        没有账号?
         <router-link to="/register" class="link-register">立即注册</router-link>
       </div>
     </div>
     <!-- 短信登录 -->
-    <div class="login-message" v-show="!show">
+    <div class="login-message" v-if="!show">
       <!-- 输入电话 -->
       <span class="ipt-wrap">
         <i class="icon-sign-phone"></i>
@@ -51,7 +66,11 @@
       </span>
 
       <!-- 滑动验证 -->
-      <drag></drag>
+      <!-- <drag></drag> -->
+      <div class="form-row">
+        <drag></drag>
+        <div class="tip-error">请滑动完成验证</div>
+      </div>
 
       <!-- 验证码 -->
       <div class="form-row">
@@ -72,54 +91,333 @@
       </div>
 
       <!-- 登录按钮 -->
-      <button type="submit" class="login">登录</button>
+      <button type="button" class="login" @click="login2">登录</button>
 
       <!-- 提示信息 -->
       <div class="text-tip">
-        <div class="tip-error"></div>没有账号
+        <!-- <div class="tip-error"></div> -->
+        没有账号
         <router-link to="/register" class="link-register">立即注册</router-link>
+      </div>
+    </div>
+
+    <div class="dialog-wrap dialog-prop-default" v-show="showDialog">
+      <div class="dialog-layer"></div>
+      <div class="dialog-container" v-show="showAlert">
+        <div class="dialog-title">
+          <h3 class="title">提示</h3>
+          <a href="javascript:;" class="close" @click="closeAlert">
+            <i class="icon-close"></i>
+          </a>
+        </div>
+        <div class="dialog-con">{{dialogText}}</div>
+        <!-- 账号不存在 -->
+        <!-- 该账号或密码错误，如有问题请联系客服 -->
+        <div class="dialog-footer">
+          <div class="btns">
+            <span class="btn btn-sure" @click="closeAlert">知道了</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import Drag from './components/Drag'
+import Drag from "./components/Drag";
 export default {
   name: "LoginMain",
-  components:{
-        Drag,
+  components: {
+    Drag
   },
   data: function() {
     return {
+      dialogText: "",
+      showAlert: true,
+      showDialog: false,
+      tel: "",
+      pwd: "",
       showcur: "0",
       show: "true",
       positionY: 0,
       isActive: true,
-      isGo: false
+      isGo: false,
+      textTel: "",
+      textPwd: "",
+      telIsError: false,
+      pwdError: false,
+      sliderIsError: false
     };
   },
   methods: {
+    closeAlert: function() {
+      this.showDialog = false;
+    },
     addClassFun: function(index) {
       this.showcur = index;
       if (index == 0) {
         this.show = true;
         // 初始化滑块
         this.isGo = false;
-        this.isActive=true;
+        this.isActive = true;
       } else {
         this.show = false;
         // 初始化滑块
         this.isGo = false;
-        this.isActive=true;
+        this.isActive = true;
       }
+    },
+    login1() {
+      console.log("login1 click!");
+      if (this.tel == "") {
+        this.textTel = "请填写手机号";
+        this.telIsError = true;
+      } else {
+        if (!/^1(3|4|5|6|7|8|9)\d{9}$/.test(this.tel)) {
+          this.textTel = "请正确填写手机号";
+          this.telIsError = true;
+        } else {
+          this.telIsError = false;
+
+          // 写一下大概思路：
+          // 先验证是否输入密码
+          // 再验证是否拖拽了滑块
+          // 然后点击 axios
+          // 然后返回三种情况 1、登录成功 2、用户不存在 3、密码错误
+
+          if (this.pwd == "") {
+            this.pwdError = true;
+            this.textPwd = "密码为空！";
+          } else {
+            this.pwdError = false;
+            if (this.$store.state.isActiveVuex == true) {
+              this.sliderIsError = true;
+            } else {
+              this.sliderIsError = false;
+              // 然后调用 axios
+              console.log(this.tel, this.pwd);
+              this.$axios
+                .post(
+                  "/login/login",
+                  this.$qs.stringify({ tel: this.tel, pwd: this.pwd })
+                )
+                .then(response => {
+                  console.log(response);
+                  // alert(response.data.msg);
+                  this.showDialog=true;
+                  this.dialogText=response.data.msg
+                  if (response.data.code == 1) {
+                    // this.loginshow = !this.loginshow;
+                    // // this.username = response.data.uname;
+                    // // this.islog = !this.islog;
+                    this.$router.push("/");
+                    // this.$store.dispatch('changeShowTopBar',false);
+                    // this.$store.dispatch('changeShowBar',false);
+                    // location.reload();
+                  }
+                })
+                .catch(function(error) {
+                  console.log(error);
+                });
+            }
+          }
+        }
+      }
+    },
+    login2() {
+      console.log("login2!");
     }
-    
   }
 };
 </script>
 
 <style scoped>
+/*! CSS 遮罩层+提示框 */
+a,
+div,
+h3,
+i,
+span {
+  padding: 0;
+  margin: 0;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: none;
+}
+a {
+  text-decoration: none;
+  color: #414a60;
+}
+a:active,
+a:focus,
+a:hover {
+  outline: 0;
+}
+a:hover {
+  color: #00d7c6;
+  text-decoration: none;
+  -webkit-transition: all linear 0.2s;
+  transition: all linear 0.2s;
+}
+.btn:hover {
+  -webkit-transition: all linear 0.2s;
+  transition: all linear 0.2s;
+}
+::selection {
+  color: #fff;
+  background: #00d7c6;
+}
+::-moz-selection {
+  color: #fff;
+  background: #00d7c6;
+}
+.btn:active,
+.btn:hover {
+  -webkit-transition: all linear 0.2s;
+  transition: all linear 0.2s;
+}
+.btn {
+  display: inline-block;
+  min-width: 112px;
+  box-sizing: content-box;
+  height: 36px;
+  line-height: 36px;
+  border: 1px #5dd5c8 solid;
+  font-size: 16px;
+  color: #fff;
+  letter-spacing: 1px;
+  background: #5dd5c8;
+  text-align: center;
+  cursor: pointer;
+}
+.btn:hover {
+  background-color: #6adbcf;
+  color: #fff;
+}
+.dialog-footer .btns .btn {
+  height: 32px;
+  line-height: 32px;
+  min-width: 42px;
+  padding: 0 25px;
+  font-size: 14px;
+}
+.dialog-wrap {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 1010;
+}
+.dialog-layer {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: #252830;
+  background: rgba(37, 40, 48, 0.7);
+  z-index: 1002;
+}
+.dialog-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: -93px 0 0 -167px;
+  background-color: #fff;
+  z-index: 1003;
+  box-shadow: 0 0 14px rgba(0, 0, 0, 0.11);
+}
+.dialog-title {
+  font-size: 14px;
+  line-height: 26px;
+  font-weight: 400;
+}
+.dialog-title .close {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  right: 8px;
+  top: 8px;
+  z-index: 1;
+}
+.icon-close {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  position: relative;
+  vertical-align: top;
+}
+.icon-close:after,
+.icon-close:before {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 1px;
+  background: #d1d4db;
+  -webkit-transform: rotate(45deg);
+  transform: rotate(45deg);
+  left: 4px;
+  top: 12px;
+}
+.icon-close:after {
+  -webkit-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+}
+.dialog-title .close:hover {
+  background-color: #ddd;
+}
+.dialog-title .close:hover .icon-close:after,
+.dialog-title .close:hover .icon-close:before {
+  background: #363636;
+}
+.dialog-prop-default .dialog-container {
+  width: 400px;
+  padding: 24px 30px;
+  margin-left: -230px;
+}
+.dialog-prop-default .dialog-container {
+  margin-left: -230px;
+}
+.dialog-prop-default .dialog-title h3.title {
+  font-weight: 400;
+}
+.dialog-prop-default .dialog-footer .btns .btn:first-of-type {
+  margin-left: 0;
+}
+.dialog-con {
+  max-height: 100%;
+}
+.dialog-footer {
+  margin-top: 10px;
+  position: relative;
+}
+.dialog-footer .btns {
+  text-align: right;
+}
+.dialog-footer .btns .btn {
+  margin: 0 0 0 20px;
+  -webkit-transition: none;
+  transition: none;
+}
+@media (max-width: 374px) {
+  .dialog-container {
+    position: absolute;
+    width: 302px;
+    margin: -93px 0 0 -151px;
+  }
+}
+@media (max-width: 800px) {
+  .dialog-prop-default .dialog-container {
+    width: 260px;
+    margin-left: -160px;
+  }
+  .dialog-prop-default .dialog-footer .btns {
+    text-align: center;
+  }
+  .dialog-prop-default .dialog-footer .btn:first-of-type {
+    margin-left: 0;
+  }
+}
 /* 以下为用于滑动验证的css */
 .back {
   transition: width 0.5s;
@@ -786,6 +1084,24 @@ input::-ms-reveal {
   line-height: 18px;
   padding-top: 7px;
 }
+.tip-error {
+  display: block;
+  position: absolute;
+  left: 3px;
+  top: 45px;
+  height: 18px;
+  padding: 0 0 0 27px;
+  /* background: url(https://static.zhipin.com/zhipin-geek/v73/web/geek/images/icons.png) no-repeat 0 -1059px; */
+  background: url("../../../assets/images/icons.png") no-repeat 0 -1059px;
+  background-size: 18px auto;
+  color: #fc703e;
+  text-align: left;
+}
+@media (max-width: 800px) {
+  .page-sign .sign-form .tip-error {
+    display: none;
+  }
+}
 .sign-form .form-row {
   margin-top: 26px;
 }
@@ -818,6 +1134,10 @@ input::-ms-reveal {
   background-position: 2px -141px;
 }
 .sign-form .ipt-sms {
+  padding-left: 38px;
+  width: 266px;
+}
+.sign-form .ipt-pwd {
   padding-left: 38px;
   width: 266px;
 }

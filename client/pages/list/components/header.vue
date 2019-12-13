@@ -6,7 +6,7 @@
                     <input name="city" value="101280100" type="hidden">
                     <input name="source" value="10" type="hidden">
                     <p class="ipt-wrap">
-                        <a href="/index" class="icon-home"><img src="https://static.zhipin.com/zhipin-geek/v89/h5/wap/images/icon-home.png"></a>
+                        <router-link to="/" class="icon-home"><img src="../../../../static/images/icon-home.png"></router-link>
                         <a class="city-text">广州</a>
                         <input type="search" ka="search-keyword" name="query" autocomplete="off" class="ipt-search" value="web前端" placeholder="搜索职位">
                         <button type="submit" class="btn btn-search" ka="search-btn">搜索</button>

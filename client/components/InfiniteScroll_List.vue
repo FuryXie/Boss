@@ -41,15 +41,13 @@ export default {
   name: "ListMain",
   data() {
     return {
-      //
-      start: 10,
-      long: 5,
-      //
+      // 
+      start:10,
+      long:5,
+      // 
       count: 10,
       loading: false,
-      list: [],
-      list3: [
-        {
+      list: [{
           href: "/detail",
           imgSrc: "./static/images/001.jpg",
           Job: "WEB前端",
@@ -157,8 +155,7 @@ export default {
           location: "广州",
           WorkExperience: "3-5年",
           EducationBackground: "本科"
-        }
-      ],
+        },],
       list2: [
         {
           href: "/detail",
@@ -500,30 +497,7 @@ export default {
       return this.loading || this.noMore;
     }
   },
-  created() {
-    /*
-          第二个生命周期函数
-          在created中，data和methods都已经初始化好
-          如果要调用methods中的方法或者data中的数据，最早只能在created中操作
-      */
-    // this.list = this.list3;
-    // 初始化data的axios
-    this.$axios
-      .get("/list/first")
-      .then(response => {
-        console.log("response.data: " + response.data);
-        // this.list=response;
-        // this.list = this.list.concat(res.result.list);
-        this.list = this.list.concat(response.data);
-        console.log(this.list);
-      })
-      .catch(function(error) {
-        console.log(error);
-      });
-
-    console.log("初始化data"); //ok
-  },
-  beforeMount() {
+  beforeMount(){
     console.log("this.loadSession();");
     this.loadSession();
     // console.log("this.listXX();");
@@ -535,63 +509,66 @@ export default {
       setTimeout(() => {
         this.count += 5;
         this.start += 5;
-
+        
         //params参数必写 , 如果没有参数传{}也可以
-        // params: {d: 12345，name: user}
+    // params: {d: 12345，name: user}
         // var params={start:this.start,long:this.long};
 
         this.$axios
-          .get("/list/list", { params: { start: this.start, long: this.long } })
-          .then(response => {
-            console.log("response.data: " + response.data);
+        .get("/list/list", {params:{start:this.start,long:this.long}})
+        .then(response=> {
+            console.log("response.data: "+response.data);
             // this.list=response;
             // this.list = this.list.concat(res.result.list);
             this.list = this.list.concat(response.data);
             console.log(this.list);
-          })
-          .catch(function(error) {
-            console.log(error);
-          });
+
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+      
 
         this.loading = false;
       }, 2000);
     },
-
-    loadSession() {
-      // ajax请求
-      this.$axios
-        .get("/login/x")
-        .then(response => {
-          if (response.data.code == 1) {
+   
+        loadSession() {
+    // ajax请求  
+    this.$axios
+      .get("/login/x")
+      .then(response=> {
+        if (response.data.code == 1) {
             this.username = response.data.uname;
-            // this.islog = true;
+            this.islog = true;
             // alert("成功！");
             // 改变样式：已经登录
             // this.$router.push("/find");
             console.log("TTTTTTTTTTT");
-          } else {
-            // this.islog = false;
-            console.log("FFFFFFFFFFF");
 
-            // this.$router.push("/nolog");
-          }
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
+        }else{
+          this.islog = false;
+          console.log("FFFFFFFFFFF");
+
+          // this.$router.push("/nolog");
+        }
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
     },
-
+    
     listXX() {
-      // ajax请求
-      this.$axios
-        .get("/list/list")
-        .then(response => {
+    // ajax请求  
+    this.$axios
+      .get("/list/list")
+      .then(response=> {
           console.log(response);
           // this.list=response;
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
     }
   }
 };
@@ -749,7 +726,6 @@ body ::-webkit-scrollbar-thumb:hover {
   position: relative;
 }
 .job-list .text h4 {
-  width: 144px;
   font-size: 15px;
   color: #414a60;
   line-height: 15px;
